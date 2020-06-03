@@ -1,0 +1,65 @@
+﻿@page "{id}"
+@model Dotmim.BlogSite.Pages.Posts.IndexModel
+@using Westwind.AspNetCore.Markdown
+@{
+    ViewData["Title"] = Model.Post.Title;
+    ViewData["Description"] = Model.Post.Excerpt;
+
+}
+
+<div class="blog-post">
+    <h1 itemprop="name headline">
+        <a asp-page="Posts/Index" asp-route-id="@Model.Post.Slug" rel="canonical" itemprop="url" title="@Model.Post.Title">@Model.Post.Title</a>
+    </h1>
+
+    <p class="blog-post-meta">
+        @if (Model.Post.PubDate.HasValue)
+        {
+            @Model.Post.PubDate.Value.ToString("MMM dd, yyyy")
+        }
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            <a asp-page="Edit" asp-route-id="@Model.Post.Id"
+               title="Edit the post">Edit post</a>
+        }
+    </p>
+
+    <markdown markdown="@Model.Post.BlogContent" />
+
+    <div class="blog-post-meta">
+        @if (Model.Post.Tags.Any())
+        {
+            <ul class="categories">
+                <li> Posted in </li>
+                @foreach (var tag in Model.Post.Tags)
+                {
+                    <li itemprop="articleSection"><a asp-controller="Blog" asp-action="Category" asp-route-category="@tag.Id">@tag.Title</a></li>
+                }
+            </ul>
+            <text>and has</text>
+        }
+
+        @*<a href="@Model.GetLink()#comments" itemprop="discussionUrl" title="Go to the comments section">
+                <span itemprop="commentCount">@Model.Comments.Count</span> @(Model.Comments.Count == 1 ? "comment" : "comments")
+            </a>*@
+
+        @*<meta itemprop="author" content="@settings.Owner" />*@
+
+        @if (Model.Post.LastModified.HasValue)
+        {
+            <meta itemprop="dateModified" content="@Model.Post.LastModified.Value.ToString(" s")" />
+        }
+    </div>
+
+</div>
+
+
+
+@if (User.Identity.IsAuthenticated)
+{
+    @section Scripts {
+        <script src="~/js/admin.js" async defer></script>
+        <link rel="stylesheet" href="~/css/admin.scss" />
+    }
+}

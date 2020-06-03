@@ -1,0 +1,23 @@
+version: '3.4'
+
+services:
+
+  sql.data:
+    image: mcr.microsoft.com/mssql/server
+
+  dotmim.blogsite:
+    image: ${DOCKER_REGISTRY-}dotmimblogsite
+    build:
+      context: .
+      dockerfile: Dotmim.BlogSite/Dockerfile
+    depends_on:
+      - dotmim.posts.api
+
+  dotmim.posts.api:
+    image: ${DOCKER_REGISTRY-}dotmimpostsapi
+    build:
+      context: .
+      dockerfile: Dotmim.Posts.Api/Dockerfile
+    depends_on:
+      - sql.data
+

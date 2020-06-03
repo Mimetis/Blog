@@ -1,0 +1,75 @@
+﻿@model Post
+@using Westwind.AspNetCore.Markdown
+@{
+    ViewData["Title"] = Model.Title;
+    ViewData["Description"] = Model.Excerpt;
+    string host = Context.Request.Scheme + "://" + Context.Request.Host;
+
+}
+
+@section Head {
+    <link rel="canonical" href="@(host + Model.GetLink())" />
+}
+
+<div class="blog-post">
+    <h2 itemprop="name headline">
+        <a asp-page="Posts/Index" asp-route-id="@Model.Slug" rel="canonical" itemprop="url" title="@Model.Title">@Model.Title</a>
+    </h2>
+
+    <p class="blog-post-meta">
+        @if (Model.PubDate.HasValue)
+        {
+            @Model.PubDate.Value.ToString("MMM dd, yyyy")
+        }
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            <a asp-page="Posts/Edit" asp-route-id="@Model.Id"
+               title="Edit the post">Edit post</a>
+        }
+    </p>
+
+    <markdown markdown="@Model.Excerpt" />
+
+    <div class="blog-post-meta">
+        @if (Model.Tags.Any())
+        {
+            <ul class="categories">
+                <li> Posted in </li>
+                @foreach (var tag in Model.Tags)
+                {
+                    <li itemprop="articleSection"><a asp-controller="Blog" asp-action="Category" asp-route-category="@tag.Id">@tag.Title</a></li>
+                }
+            </ul>
+            <text>and has</text>
+        }
+
+        @*<a href="@Model.GetLink()#comments" itemprop="discussionUrl" title="Go to the comments section">
+                <span itemprop="commentCount">@Model.Comments.Count</span> @(Model.Comments.Count == 1 ? "comment" : "comments")
+            </a>*@
+
+        @*<meta itemprop="author" content="@settings.Owner" />*@
+
+        @if (Model.LastModified.HasValue)
+        {
+            <meta itemprop="dateModified" content="@Model.LastModified.Value.ToString(" s")" />
+        }
+        <meta itemprop="mainEntityOfPage" content="@(host + Model.GetLink())" />
+
+        <a asp-page="Posts/Index" asp-route-id="@Model.Slug" itemprop="discussionUrl" title="Read More">Read more</a>
+
+
+        <hr />
+    </div>
+
+</div>
+
+
+
+@if (User.Identity.IsAuthenticated)
+{
+    @section Scripts {
+        <script src="~/js/admin.js" async defer></script>
+        <link rel="stylesheet" href="~/css/admin.scss" />
+    }
+}

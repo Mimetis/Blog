@@ -1,0 +1,119 @@
+﻿@page
+@model Dotmim.BlogSite.Pages.Posts.EditModel
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+
+@section Head{
+    <link rel="stylesheet" href="~/css/admin.css" />
+    <script src="https://unpkg.com/stackedit-js@1.0.7/docs/lib/stackedit.min.js"></script>
+}
+
+
+<form method="post" id="edit" class="container" asp-controller="Blog" asp-action="UpdatePost">
+    <div asp-validation-summary="All"></div>
+    <input type="hidden" asp-for="Post.Id" />
+
+    <label asp-for="Post.Title" class="label">Title</label>
+    <input asp-for="Post.Title" required placeholder="Title of blog post" aria-describedby="desc_title" />
+    <span class="desc" id="desc_title">The title as it appears on the website</span>
+    <br />
+
+    <label asp-for="Post.Slug" class="label">Slug</label>
+    <input asp-for="Post.Slug" placeholder="The URL name" aria-describedby="desc_slug" />
+    <span class="desc" id="desc_slug">The part of the URL that identifies this blog post</span>
+    <br />
+
+    <label for="categories" class="label">Tags</label>
+    <input type="text" name="tags" id="tags" value="@string.Join(" , ", Model.Post.Tags)" aria-describedby="desc_tags" />
+    <span class="desc" id="desc_tags">A comma separated list of keywords</span>
+    <br />
+
+    <label asp-for="Post.Excerpt" class="label">Excerpt</label>
+    <a href="javascript:void(0)" id="excerpt_btn">Open Excerpt with editor</a>
+    <div class="excerpt_html">
+    </div>
+    <input type="hidden" asp-for="Post.Excerpt" class="excerpt_hidden" />
+
+    <br />
+
+    <label asp-for="Post.BlogContent" class="label">Content</label>
+    <a href="javascript:void(0)" id="content_btn">Open Content with editor</a>
+    <div class="content_html">
+    </div>
+
+    <input type="hidden" asp-for="Post.BlogContent" class="content_hidden" />
+    <input type="hidden" asp-for="Post.PubDate" class="content_hidden" />
+    <input type="hidden" asp-for="Post.LastModified" class="content_hidden" />
+
+
+    <input type="submit" value="Save" title="Save the post" />
+
+    <input asp-for="Post.IsPublished" />
+    <label asp-for="Post.IsPublished">Is published</label>
+
+    @if (!Model.IsNew)
+    {
+        <input type="submit" value="Delete..." class="delete" title="Delete the post..." asp-action="DeletePost" asp-route-id="@Model.Post.Id" />
+    }
+</form>
+
+<script>
+
+    const content_btn = document.getElementById("content_btn");
+    const excerpt_btn = document.getElementById("excerpt_btn");
+
+    const content_html = document.querySelector('.content_html');
+    const excerpt_html = document.querySelector('.excerpt_html');
+
+    const content_hidden = document.querySelector('.content_hidden');
+    const excerpt_hidden = document.querySelector('.excerpt_hidden');
+
+    function content_open(background) {
+
+        const stackedit_content = new Stackedit();
+
+        stackedit_content.on('fileChange', (file) => {
+            content_html.innerHTML = file.content.html;
+            content_hidden.value = file.content.text;
+        });
+
+        stackedit_content.openFile({
+            name: 'Edit Content with StackEdit',
+            content: {
+                text: content_hidden.value
+            }
+        }, background);
+    }
+
+    function excerpt_open(background) {
+
+        const stackedit_excerpt = new Stackedit();
+
+        stackedit_excerpt.on('fileChange', (file) => {
+            excerpt_html.innerHTML = file.content.html;
+            excerpt_hidden.value = file.content.text;
+        });
+
+
+        stackedit_excerpt.openFile({
+            name: 'Edit Excerpt with StackEdit',
+            content: {
+                text: excerpt_hidden.value
+            }
+        }, background);
+
+    }
+
+    // calling on background to parse the content and set in the html
+    content_open(true);
+    excerpt_open(true);
+    // open iframe
+    content_btn.onclick = () => { content_open(false); }
+    excerpt_btn.onclick = () => { excerpt_open(false); }
+
+
+</script>

@@ -1,0 +1,31 @@
+version: '3.4'
+
+services:
+
+  sql.data:
+    environment:
+      - SA_PASSWORD=Passw0rd
+      - ACCEPT_EULA=Y
+    ports:
+      - "41433:1433"    # Important: In a production environment your should remove the external port
+
+  dotmim.blogsite:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_HTTPS_PORT=44303
+      - PostsApiUrl=http://dotmim.posts.api
+    ports:
+      - "62099:80"
+      - "44303:443"
+    volumes:
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+
+  dotmim.posts.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionString=Data Source=sql.data;Initial Catalog=Blog;User Id=sa;Password=Passw0rd;
+    ports:
+      - "80"
+

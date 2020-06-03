@@ -1,0 +1,39 @@
+﻿@page 
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+
+@foreach (var post in Model.Posts.Data)
+{
+    await Html.RenderPartialAsync("Posts/Post.cshtml", post);
+}
+
+<nav class="pagination container" aria-label="Pagination">
+    @if (!String.IsNullOrEmpty((String)ViewData["prev"]))
+    {
+        <a rel="prev" href="@ViewData["prev"]" title="Older posts">&laquo; Older</a>
+    }
+
+    @if (!String.IsNullOrEmpty((String)ViewData["next"]))
+    {
+        <a rel="next" href="@ViewData["next"]" title="Newer posts">Newer &raquo;</a>
+    }
+    <br /><br />
+
+    @section Head {
+        @if (!String.IsNullOrEmpty((String)ViewData["prev"]))
+        {
+            <link rel="prev" href="@ViewData["prev"]" />
+        }
+        @if (!String.IsNullOrEmpty((String)ViewData["next"]))
+        {
+            <link rel="next" href="@ViewData["next"]" />
+        }
+    }
+
+ 
+
+</nav>
+

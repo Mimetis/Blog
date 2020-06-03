@@ -1,0 +1,95 @@
+﻿@page
+@model IndexModel
+
+    
+
+<div class="page-consent">
+    <div class="row page-header">
+        <div class="col-sm-10 col-sm-offset-1">
+            @if (Model.ClientLogoUrl != null)
+            {
+                <div class="client-logo"><img src="@Model.ClientLogoUrl"></div>
+            }
+            <h1>
+                @Model.ClientName
+                <small>is requesting your permission</small>
+            </h1>
+        </div>
+    </div>
+
+    @Html.Partial("_StatusMessage", Model.StatusMessage)
+
+    <div class="row">
+        <div class="col-sm-8 col-sm-offset-2">
+            @Html.Partial("_ValidationSummary")
+            <form asp-action="Index" class="consent-form">
+                <input type="hidden" asp-for="Input.ReturnUrl" />
+
+                <div>Uncheck the permissions you do not wish to grant.</div>
+
+                @if (Model.Input != null && Model.Input.IdentityScopes != null && Model.Input.IdentityScopes.Any())
+                {
+                    <div class="panel panel-default consent-buttons">
+                        <div class="panel-heading">
+                            <span class="glyphicon glyphicon-user"></span>
+                            Personal Information
+                        </div>
+                        <ul class="list-group">
+                            @for (int i = 0; i < Model.Input.IdentityScopes.Count; i++)
+                            {
+                                string prefix = "Input.IdentityScopes[" + i + "]";
+                                ViewDataDictionary vdd = new ViewDataDictionary(ViewData);
+                                vdd.TemplateInfo.HtmlFieldPrefix = prefix;
+
+                                @Html.Partial("_ScopeListItem", Model.Input.IdentityScopes[i], vdd)
+                            }
+                        </ul>
+                    </div>
+                }
+
+
+                @if (Model.Input != null && Model.Input.ResourceScopes!= null && Model.Input.ResourceScopes.Any())
+                {
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <span class="glyphicon glyphicon-tasks"></span>
+                            Application Access
+                        </div>
+                        <ul class="list-group">
+                            @for (int i = 0; i < Model.Input.ResourceScopes.Count; i++)
+                            {
+                                string prefix = "Input.ResourceScopes[" + i + "]";
+                                ViewDataDictionary vdd = new ViewDataDictionary(ViewData);
+                                vdd.TemplateInfo.HtmlFieldPrefix = prefix;
+
+                                @Html.Partial("_ScopeListItem", Model.Input.ResourceScopes[i], vdd)
+                            }
+                        </ul>
+                    </div>
+                }
+
+                @if (Model.AllowRememberConsent)
+                {
+                    <div class="consent-remember">
+                        <label>
+                            <input class="consent-scopecheck" asp-for="Input.RememberConsent" />
+                            <strong>Remember My Decision</strong>
+                        </label>
+                    </div>
+                }
+
+                <div class="consent-buttons">
+                    <button name="button" value="yes" class="btn btn-primary" autofocus>Yes, Allow</button>
+                    <button name="button" value="no" class="btn">No, Do Not Allow</button>
+                    @if (Model.ClientUrl != null)
+                    {
+                        <a class="pull-right btn btn-default" target="_blank" href="@Model.ClientUrl">
+                            <span class="glyphicon glyphicon-info-sign"></span>
+                            <strong>@Model.ClientName</strong>
+                        </a>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

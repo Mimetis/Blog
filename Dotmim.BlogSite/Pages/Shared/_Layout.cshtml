@@ -1,0 +1,119 @@
+﻿@{
+    var currentPage = this.ViewContext.RouteData.Values["page"].ToString();
+
+    string getIsActive(string path)
+    {
+        return currentPage == path ? "active" : "";
+    }
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Dotmim.BlogSite</title>
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css">
+
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"
+              crossorigin="anonymous"
+              integrity="sha256-eSi1q2PG6J7g7ib17yAaWMcrr5GrtohYChqibrV7PBE=" />
+    </environment>
+    <link rel="stylesheet" href="~/css/site.css" />
+
+    @RenderSection("Head", required: false)
+
+</head>
+<body>
+
+    <div class="blog-masthead">
+        <div class="container">
+            <h1>Sébastien Pertus</h1>
+            <h2>Software Engineer at Microsoft France</h2>
+        </div>
+    </div>
+
+    <div class="container">
+        <partial name="_CookieConsentPartial" />
+
+        <div class="blog-header">
+            <nav class="blog-nav">
+                <a class="blog-nav-item @(getIsActive("/Index"))" href="/">Home</a>
+                <a class="blog-nav-item @(getIsActive("/Privacy"))" asp-area="" asp-page="/Privacy">Privacy</a>
+                @if (User != null && User.Identity.IsAuthenticated)
+                {
+                    <a class="blog-nav-item @(getIsActive("/Account/Manage"))" asp-page="/Account/Manage">Hello @User.FindFirst("name")?.Value</a>
+                    <a class="blog-nav-item @(getIsActive("/Logout"))" asp-page="/Logout">Log out</a>
+                    <a class="blog-nav-item @(getIsActive("/Posts/Edit"))" asp-page="/Posts/Edit">New post</a>
+                }
+                else
+                {
+                    <a class="blog-nav-item @(getIsActive("/Login"))" asp-area="" asp-page="/Login">Log in</a>
+                }
+            </nav>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 blog-main">
+                <hr />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 blog-main">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            <p>
+                Blog by <a href="https://twitter.com/sebpertus">Sébastien Pertus</a>.
+                &copy; 2019 - <a asp-area="" asp-page="/Privacy">Privacy</a>
+            </p>
+        </div>
+    </footer>
+
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=">
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.bundle.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                crossorigin="anonymous"
+                integrity="sha256-E/V4cWE4qvAeO5MOhjtGtqDzPndRO1LBk8lJ/PR7CA4=">
+        </script>
+    </environment>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @RenderSection("Scripts", required: false)
+
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+
+    <script>
+        setTimeout(function () {
+            var pres = document.querySelectorAll("pre>code");
+            if (pres != undefined) {
+                for (var i = 0; i < pres.length; i++) {
+                    hljs.highlightBlock(pres[i]);
+                }
+            }
+        });
+    </script>
+    }
+</body>
+</html>

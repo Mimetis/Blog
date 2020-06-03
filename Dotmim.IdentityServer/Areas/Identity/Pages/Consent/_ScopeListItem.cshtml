@@ -1,0 +1,77 @@
+﻿@model ScopeViewModel
+<li class="list-group-item">
+    <label>
+
+        <input type="hidden" asp-for="@Model.Name" />
+        <input type="hidden" asp-for="@Model.DisplayName" />
+        <input type="hidden" asp-for="@Model.Description" />
+        <input type="hidden" asp-for="@Model.Required" />
+        <input type="hidden" asp-for="@Model.Emphasize" />
+
+        <input class="consent-scopecheck"
+               type="checkbox"
+               asp-for="@Model.Checked"
+               disabled="@Model.Required" />
+
+        @* if input is disabled, no value is passed to the binded value, so create an hidden input to pass the right value *@
+        @if (Model.Required)
+        {
+            <input type="hidden" asp-for="@Model.Checked" />
+        }
+
+        <label asp-for="@Model.Name">@Model.Name</label>
+
+
+        <strong>
+            <label asp-for="@Model.DisplayName">@Model.DisplayName"</label>
+        </strong>
+
+        @if (Model.Emphasize)
+        {
+            <span class="glyphicon glyphicon-exclamation-sign"></span>
+        }
+
+    </label>
+    @if (Model.Required)
+    {
+        <span><em>(required)</em></span>
+    }
+    @if (Model.Description != null)
+    {
+        <div class="consent-description">
+            <label asp-for="@Model.Description">@Model.Description</label>
+        </div>
+    }
+</li>
+@*<li class="list-group-item">
+        <label>
+            <input class="consent-scopecheck"
+                   type="checkbox"
+                   name="ScopesConsented"
+                   id="scopes_@Model.Name"
+                   value="@Model.Name"
+                   checked="@Model.Checked"
+                   disabled="@Model.Required" />
+            @if (Model.Required)
+            {
+                <input type="hidden"
+                       name="ScopesConsented"
+                       value="@Model.Name" />
+            }
+            <strong>@Model.DisplayName</strong>
+            @if (Model.Emphasize)
+            {
+                <span class="glyphicon glyphicon-exclamation-sign"></span>
+            }
+        </label>
+        @if (Model.Required)
+        {
+            <span><em>(required)</em></span>
+        }
+        @if (Model.Description != null)
+        {
+            <div class="consent-description">
+                <label for="scopes_@Model.Name">@Model.Description</label>
+            </div>
+        }
+    </li>*@
